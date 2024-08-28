@@ -54,15 +54,15 @@ func runStageWithWorkers(stage func(<-chan int) <-chan int, source <-chan int, w
 func stage1(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
-		fmt.Println("Starting worker instance for stage 1")
+		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "Starting worker instance for stage 1")
 		defer close(out)
 		for v := range in {
 			time.Sleep(Stage1Delay)
 			if v >= 0 {
-
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "Number", v, "passed negative filter")
 				out <- v
 			} else {
-				fmt.Println("Number", v, "filtered out by negative filter")
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "Number", v, "filtered out by negative filter")
 			}
 		}
 	}()
@@ -72,14 +72,15 @@ func stage1(in <-chan int) <-chan int {
 func stage2(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
-		fmt.Println("Starting worker instance for stage 2")
+		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "Starting worker instance for stage 2")
 		defer close(out)
 		for v := range in {
 			time.Sleep(Stage2Delay)
 			if v%3 != 0 {
 				out <- v
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "Number", v, "passed multiple_of_3 filter")
 			} else {
-				fmt.Println("Number", v, "filtered out by multiple_of_3 filter")
+				fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "Number", v, "filtered out by multiple_of_3 filter")
 			}
 		}
 	}()
@@ -153,4 +154,5 @@ func main() {
 	}
 
 	flushBuffer(buffer, start)
+
 }
